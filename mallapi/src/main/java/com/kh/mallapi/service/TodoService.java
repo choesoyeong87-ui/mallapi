@@ -6,13 +6,13 @@ import com.kh.mallapi.dto.TodoDTO;
 
 public interface TodoService {
 	//insert
-	public Long register(TodoDTO todoDTO); 
-	//service
-	public TodoDTO get(Long tno); 
+	public Long register(TodoDTO todoDTO);
+	//select
+	public TodoDTO get(Long tno);
 	//update
-	void modify(TodoDTO todoDTO); 
+	void modify(TodoDTO todoDTO);
 	//delete
 	void remove(Long tno); 
-	//페이징기법
-	PageResponseDTO<TodoDTO> list(PageRequestDTO pageRequestDTO); 
+	//페이징 기법
+	PageResponseDTO<TodoDTO> list(PageRequestDTO pageRequestDTO);
 }

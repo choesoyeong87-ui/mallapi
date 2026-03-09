@@ -18,68 +18,71 @@ import lombok.extern.log4j.Log4j2;
 
 @SpringBootTest
 @Log4j2
-public class TodoRepositoryTests {
+public class TodoRepositoryTest {
 	@Autowired
 	private TodoRepository todoRepository;
 
 	// @Test
 	public void test1() {
-		log.info("==============");
+		log.info("============================");
 		log.info(todoRepository);
-		log.info("==============");
+		log.info("============================");
 	}
 
+	// Insert == repository.save(Entity)
 	// @Test
-	// insert == repository.save(Entity)
 	public void testInsert() {
 		for (int i = 1; i <= 100; i++) {
-			Todo todo = Todo.builder().title("Title..." + i).dueDate(LocalDate.of(2026, 3, 9)).writer("user00").build();
-			// jqa : save(Entity)
-			// insert into tbl_todo vlaues(todo_seq.nextval(),
-			// 'title...1',false,'user00','2026-03-09'
+			Todo todo = Todo.builder().title("Title..." + i).dueDate(LocalDate.of(2026, 3, 9)).writer("user" + i)
+					.build();
+			// save(Entity) : insert
+			// insert into tbl_todo values(todo_seq.nextval, 'title...1', flase, 'user1',
+			// '2026-03-09')와 같다.
 			todoRepository.save(todo);
 		}
 	}
 
+	// Select == findById(Entity.PK)
 	// @Test
-	// select * from tbl_todo where tno = 33 == repository.findById(33L)
 	public void testRead() {
 		// 존재하는 번호로 확인
-		Long tno = 33L;
+		Long tno = 55L;
 		java.util.Optional<Todo> result = todoRepository.findById(tno);
 		Todo todo = result.orElseThrow();
 		log.info(todo);
 	}
 
+	// update 로직
+	// 1. java.util.Optional<Todo> result = ...findById(Entity.PK) => 수정할 데이터를 불러온다.
+	// 2. Todo todo = result.orElseThrow() / todo.changeTitle("Modified 33...") ...
+	// => 해당 데이터를 수정한다.
+	// 3. todoRepository.save(Entity) => 수정된 데이터를 저장한다.
 	// @Test
-	// update =>1. repository.findById(33L) 2. 해당컬럼을 setter
-	// 3. repository.save(Entity)
 	public void testModify() {
 		Long tno = 33L;
 		java.util.Optional<Todo> result = todoRepository.findById(tno);
 		Todo todo = result.orElseThrow();
 		todo.changeTitle("Modified 33...");
 		todo.changeComplete(true);
-		todo.changeDueDate(LocalDate.of(2023, 10, 10));
+		todo.changeDueDate(LocalDate.of(2026, 4, 10));
 		todoRepository.save(todo);
 	}
 
-	@Test
-	// delete from tble_todo where tno = 1 === repository.deleteById(1L)
+	// Delete == deleteById(Entity.PK)
+	// @Test
 	public void testDelete() {
 		Long tno = 1L;
 		todoRepository.deleteById(tno);
 	}
-
-	@Test
-	//Pageable pageable = PageRequest.of(시작페이지-1, 페이지당보여주는라인수,정렬기준);
-	//페이징기법 : todoRepository.findAll(pageable);
+	
+	//페이징 처리 로직
+	//Pageable pageable = PageRequest.of(시작페이지 - 1, 페이지당 보여주는 라인 수, 정렬기준);
+	//@Test
 	public void testPaging() {
 		// 0번째 페이지요청(페이지 인덱스는 0부터 시작), 한 페이지에 10개의 데이터,
 		// 정렬기준은 tno 필드를 기준으로 내림차순
-		Pageable pageable = PageRequest.of(1, 5, Sort.by("tno").descending());
+		Pageable pageable = PageRequest.of(0, 10, Sort.by("tno").descending());
 		// Page<Todo>타입 반환되며, 전체 정보(총 개수, 현재 페이지 등)가 포함
-		//List<Todo>:1페이지에 해당되는 10레코드수가 들어있다.
 		Page<Todo> result = todoRepository.findAll(pageable);
 		// 전체 데이터 개수(전체 Todo 엔티티 수)를 로그로 출력
 		log.info(result.getTotalElements());

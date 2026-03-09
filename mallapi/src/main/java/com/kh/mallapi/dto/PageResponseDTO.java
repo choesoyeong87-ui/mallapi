@@ -5,18 +5,21 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 public class PageResponseDTO<E> {
-	private List<E> dtoList; // List<Member> 1페이지에 10개의 레코드가 온다
+
+	private List<E> dtoList; // 1페이지 10개 레코드
 	private List<Integer> pageNumList; // [1],2,3,4,5,6,7,8,9,10
-	private PageRequestDTO pageRequestDTO; // page =1 size = 10
-	private boolean prev; // false
-	private boolean next; // ture
-	private int totalCount; // 99개
-	private int prevPage; // 앞에페이지가 몇개? 0개
-	private int nextPage; // 다음페이지가 몇개? 2페이지
-	private int totalPage; // 전부 페이지 10페이지
-	private int current; // 현제페이지 1페이지
+	private PageRequestDTO pageRequestDTO; // page = 1, size = 10
+	private boolean prev; 	// false
+	private boolean next; 	// true
+	private int totalCount; // 99
+	private int prevPage;	// 0
+	private int nextPage;	// 2
+	private int totalPage;	// 10
+	private int current;	// 1
 
 	// PageResponseDTO.builder() 대신 PageResponseDTO.withAll() 라는 이름으로 빌더를 사용
 	@Builder(builderMethodName = "withAll")
@@ -41,4 +44,5 @@ public class PageResponseDTO<E> {
 		this.totalPage = this.pageNumList.size();
 		this.current = pageRequestDTO.getPage();
 	}
+
 }

@@ -1,7 +1,5 @@
 package com.kh.mallapi.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,13 +13,13 @@ import com.kh.mallapi.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-
-@RestController 
+@RestController
 //생성자 의존성 주입 
-@RequiredArgsConstructor 
-@Log4j2 
+@RequiredArgsConstructor
+@Log4j2
 @RequestMapping("/api/todo")
 public class TodoController {
+
 	private final TodoService service;
 
 	@GetMapping("/{tno}")
