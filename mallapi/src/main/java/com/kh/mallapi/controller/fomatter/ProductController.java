@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,21 +66,34 @@ public class ProductController {
 	@PutMapping("/{pno}")
 	public Map<String, String> modify(@PathVariable(name = "pno") Long pno, ProductDTO productDTO) {
 		productDTO.setPno(pno);
-		//현재있는 파일의 정보를 알려줌pno 120L, pname="aaa" pdesc="aaaaa" pfile=[] imgStr"aaa.jpg"
+		// 현재있는 파일의 정보를 알려줌pno 120L, pname="aaa" pdesc="aaaaa" pfile=[] imgStr"aaa.jpg"
 		ProductDTO oldProductDTO = productService.get(pno);
 		// 기존파일들 (데이터베이스에 존재하는 파일들-수정 과정에서 삭제되었을 수 있음)
 		List<String> oldFileNames = oldProductDTO.getUploadFileNames();
 		// 새로 업로드 해야 하는 파일들(0,0),(x,0),(x,x),(0,x)
-		//bbb.jpg
+		// bbb.jpg
+		// bbb.jpg
+		// 새로운파일이없음
+		// 새로운파일이없음
 		List<MultipartFile> files = productDTO.getFiles();
 		// 새로 업로드되어서 만들어진 파일 이름들
-		//bbb.jpg 내부폴더에 저장하고 이름을 ~~~로 저장하고, safsa_bbb.jage
-		List<String> currentUploadFileNames = fileUtil.saveFiles(files);
+		// bbb.jpg 내부폴더에 저장하고 이름을 ~~~로 저장하고, safsa_bbb.jage
+		List<String> currentUploadFileNames = null;
+		if (files != null && !files.get(0).isEmpty()) {
+			currentUploadFileNames = fileUtil.saveFiles(files);
+		}
 		// 화면에서 변화 없이 계속 유지된 파일들
+		// sjfk_aaa.jpg
+		// sjfk_aaa.jpg(삭제)
+		// sjfk_aaa.jpg(삭제)
+		// sjfk_aaa.jpg
 		List<String> uploadedFileNames = productDTO.getUploadFileNames();
 		// 유지되는 파일들 + 새로 업로드된 파일 이름들이 저장해야 하는 파일 목록이 됨
 		if (currentUploadFileNames != null && !currentUploadFileNames.isEmpty()) {
-			//기존 :{sjfk_aaa.jpg, safsa_bbb.jpg}
+			// 기존 :{sjfk_aaa.jpg, safsa_bbb.jpg}
+			// 기존삭제 :{sjfk_aaa.jpg, safsb_bbb.jpg}
+			// 이 문장이 실행이 안됨.
+			// 이 문장이 실행이 안됨.
 			uploadedFileNames.addAll(currentUploadFileNames);
 		}
 		// 수정 작업
@@ -92,6 +106,17 @@ public class ProductController {
 			// 실제 파일 삭제
 			fileUtil.deleteFiles(removeFiles);
 		}
+		return Map.of("RESULT", "SUCCESS");
+	}
+
+	@DeleteMapping("/{pno}")
+	public Map<String, String> remove(@PathVariable("pno") Long pno) {
+		// 삭제해야 할 파일들 알아내기
+		List<String> oldFileNames = productService.get(pno).getUploadFileNames();
+		// 테이블 flag = true update
+		productService.remove(pno);
+		// 기존의 이미지 삭제
+		fileUtil.deleteFiles(oldFileNames);
 		return Map.of("RESULT", "SUCCESS");
 	}
 }
