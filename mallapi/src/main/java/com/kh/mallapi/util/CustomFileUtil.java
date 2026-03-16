@@ -42,11 +42,12 @@ public class CustomFileUtil {
 
 	// 사용자가 보내준 리스트파일을 내장폴더에 중복되지 않는 이름을 변경 저장, 파일명은 리스트에 저장
 	public List<String> saveFiles(List<MultipartFile> files) throws RuntimeException {
+		List<String> uploadNames = new ArrayList<>();
 		if (files == null || files.isEmpty()) { // size() == 0 대신 isEmpty() 권장
-			return null;
+			uploadNames.add("default.jpg");
+			return uploadNames;
 		}
 		// 절대중복되지않는 파일명을 ㅏㄴ들어서 저장되는 리스트
-		List<String> uploadNames = new ArrayList<>();
 
 		for (MultipartFile multipartFile : files) {
 			String savedName = UUID.randomUUID().toString() + "_" + multipartFile.getOriginalFilename();
